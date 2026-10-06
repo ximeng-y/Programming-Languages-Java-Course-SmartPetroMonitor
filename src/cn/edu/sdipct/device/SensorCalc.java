@@ -42,6 +42,16 @@ public class SensorCalc {
 
         System.out.println();
         System.out.println("========== 阈值检测 ==========");
+        char levelCode = determineAlarmLevel(celsius);
+        String actionText = getActionText(levelCode);
+        System.out.println("报警级别：" + levelCode);
+        System.out.println(actionText);
+
+        scanner.close();
+    }
+
+    // 供单次计算和监测日报共用同一套四档边界。
+    public static char determineAlarmLevel(double celsius) {
         char levelCode;
         // 从高到低判断，四档无重叠、无遗漏；85.0 和 70.0 属于黄色，5.0 属于正常。
         if (celsius > 85.0) {
@@ -54,16 +64,16 @@ public class SensorCalc {
             levelCode = 'B'; // 蓝色：温度 < 5.0。
         }
 
-        String actionText = switch (levelCode) {
+        return levelCode;
+    }
+
+    public static String getActionText(char levelCode) {
+        return switch (levelCode) {
             case 'R' -> "红色报警：立即停机检查";
             case 'Y' -> "黄色预警：加强巡检";
             case 'G' -> "正常";
             case 'B' -> "蓝色提示：防冻保护";
             default -> throw new IllegalStateException("未知报警级别：" + levelCode);
         };
-        System.out.println("报警级别：" + levelCode);
-        System.out.println(actionText);
-
-        scanner.close();
     }
 }
