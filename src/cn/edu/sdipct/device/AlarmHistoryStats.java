@@ -28,13 +28,19 @@ public class AlarmHistoryStats {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("请输入监测日志（编号,读数,状态），每行一条，单独输入 -99999 结束：");
+        runMonitoring(scanner);
+        scanner.close();
+    }
+
+    // 手动输入和随机模拟共用日志解析、输入验证、统计及日报流程。
+    public static void runMonitoring(Scanner scanner) {
         int readingCount = 0;
         int alarmCount = 0;
         double maxTemperature = 0.0;
         invalidLineCount = 0;
         List<SensorReading> readings = new ArrayList<>();
 
-        System.out.println("请输入监测日志（编号,读数,状态），每行一条，单独输入 -99999 结束：");
         SensorReading reading = readValidReading(scanner);
 
         // 输入次数事先未知，不适合按固定次数控制的 for 循环。
@@ -60,7 +66,6 @@ public class AlarmHistoryStats {
         }
 
         printDailyReport(readings, readingCount, alarmCount, maxTemperature);
-        scanner.close();
     }
 
     private static SensorReading readValidReading(Scanner scanner) {
