@@ -42,14 +42,27 @@ public class SensorCalc {
 
         System.out.println();
         System.out.println("========== 阈值检测 ==========");
-        // 正常温度区间为 [5.0, 85.0]，两个边界值都属于正常范围。
+        char levelCode;
+        // 从高到低判断，四档无重叠、无遗漏；85.0 和 70.0 属于黄色，5.0 属于正常。
         if (celsius > 85.0) {
-            System.out.println("【报警】温度超限！");
-        } else if (celsius < 5.0) {
-            System.out.println("【提示】温度过低，请注意防冻！");
+            levelCode = 'R'; // 红色：温度 > 85.0。
+        } else if (celsius >= 70.0) {
+            levelCode = 'Y'; // 黄色：70.0 <= 温度 <= 85.0。
+        } else if (celsius >= 5.0) {
+            levelCode = 'G'; // 正常：5.0 <= 温度 < 70.0。
         } else {
-            System.out.println("温度正常");
+            levelCode = 'B'; // 蓝色：温度 < 5.0。
         }
+
+        String actionText = switch (levelCode) {
+            case 'R' -> "红色报警：立即停机检查";
+            case 'Y' -> "黄色预警：加强巡检";
+            case 'G' -> "正常";
+            case 'B' -> "蓝色提示：防冻保护";
+            default -> throw new IllegalStateException("未知报警级别：" + levelCode);
+        };
+        System.out.println("报警级别：" + levelCode);
+        System.out.println(actionText);
 
         scanner.close();
     }
