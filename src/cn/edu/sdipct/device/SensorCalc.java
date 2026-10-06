@@ -40,6 +40,17 @@ public class SensorCalc {
         System.out.printf("假设恒定功率：%.2f kW（题目未指定）%n", ASSUMED_POWER_KW);
         System.out.printf("估算电耗：%.2f kWh%n", energyConsumption);
 
+        System.out.println();
+        System.out.println("========== 阈值检测 ==========");
+        // 正常温度区间为 [5.0, 85.0]，两个边界值都属于正常范围。
+        if (celsius > 85.0) {
+            System.out.println("【报警】温度超限！");
+        } else if (celsius < 5.0) {
+            System.out.println("【提示】温度过低，请注意防冻！");
+        } else {
+            System.out.println("温度正常");
+        }
+
         scanner.close();
     }
 }
