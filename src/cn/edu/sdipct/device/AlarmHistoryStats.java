@@ -1,6 +1,6 @@
 /*
  * 文件名：AlarmHistoryStats.java
- * 程序功能：连续读取温度，统计监测次数、报警次数和最高温度。
+ * 程序功能：验证并连续读取温度，统计有效监测次数、报警次数和最高温度。
  */
 package cn.edu.sdipct.device;
 
@@ -10,6 +10,8 @@ public class AlarmHistoryStats {
 
     private static final double EXIT_READING = -99999.0;
     private static final double ALARM_THRESHOLD = 85.0;
+    private static final double MIN_TEMPERATURE = -50.0;
+    private static final double MAX_TEMPERATURE = 150.0;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -18,7 +20,7 @@ public class AlarmHistoryStats {
         double maxTemperature = 0.0;
 
         System.out.println("请依次输入温度（℃），输入 -99999 结束：");
-        double celsius = scanner.nextDouble();
+        double celsius = readValidReading(scanner);
 
         // 输入次数事先未知，不适合按固定次数控制的 for 循环。
         // 是否继续由哨兵值决定，while 可以在处理每条读数前检查条件。
@@ -36,7 +38,7 @@ public class AlarmHistoryStats {
                 maxTemperature = celsius;
             }
 
-            celsius = scanner.nextDouble();
+            celsius = readValidReading(scanner);
         }
 
         // 哨兵值不进入循环体，也不参与次数和最高温度统计。
@@ -48,5 +50,29 @@ public class AlarmHistoryStats {
         }
 
         scanner.close();
+    }
+
+    private static double readValidReading(Scanner scanner) {
+        double reading = 0.0;
+        boolean validReading;
+
+        do {
+            if (scanner.hasNextDouble()) {
+                reading = scanner.nextDouble();
+                // 退出值单独放行；有效温度包含 -50.0 和 150.0 两个边界。
+                validReading = reading == EXIT_READING
+                        || (reading >= MIN_TEMPERATURE && reading <= MAX_TEMPERATURE);
+            } else {
+                // 消耗非数字输入，避免重复读取同一个错误内容。
+                scanner.next();
+                validReading = false;
+            }
+
+            if (!validReading) {
+                System.out.println("Invalid reading.");
+            }
+        } while (!validReading);
+
+        return reading;
     }
 }
